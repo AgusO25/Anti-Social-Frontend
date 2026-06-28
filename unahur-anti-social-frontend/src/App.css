@@ -1,57 +1,6 @@
-/* Importamos una fuente moderna (opcional, pero recomendada) */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-
-/* --- Reset y Variables Globales --- */
-:root {
-  --bg-color: #121212; /* Fondo principal de la app */
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --accent-color: #646cff;
-  --accent-hover: #747bff;
-  --card-bg: #242424;
-  --border-color: #333333;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  background-color: var(--bg-color);
-  color: var(--text-primary);
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
-}
-
-/* --- Estilos Globales de Textos y Enlaces --- */
-h1, h2, h3, h4, h5, h6 {
-  color: var(--text-primary);
-  line-height: 1.2;
-}
-
-p {
-  color: var(--text-secondary);
-}
-
-a {
-  color: var(--accent-color);
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-a:hover {
-  color: var(--accent-hover);
-}
-
-/* --- Contenedor Principal --- */
-/* Esta clase reemplazará los estilos en línea que teníamos en App.tsx */
 .main-container {
   max-width: 800px;
   margin: 0 auto;
   padding: 32px 20px;
-  min-height: calc(100vh - 60px); /* Restamos la altura aproximada del navbar */
+  flex: 1; /* Esto hace que el contenedor empuje el contenido y ocupe el espacio disponible */
 }
