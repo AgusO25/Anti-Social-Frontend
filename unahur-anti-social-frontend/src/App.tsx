@@ -1,17 +1,17 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+// Importación de componentes globales
+import {Navbar} from './components/Navbar';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
-// Importación de las vistas (las crearemos en el siguiente paso)
-//import Home from './pages/Home';
-//import Login from './pages/Login';
-//import Register from './pages/Register';
-//import PostDetail from './pages/PostDetail';
-//import Profile from './pages/Profile';
-//import CreatePost from './pages/CreatePost';
+// Vistas
+import Home from './pages/Home';
+import Login  from './pages/Login';
+import Register  from './pages/Register';
+import  PostDetail  from './pages/PostDetail';
+import Profile  from './pages/Profile';
+import  CreatePost from './pages/CreatePost';
 
-// Importación de componentes globales
-import Navbar from './components/Navbar';
 
 function App() {
   return (
