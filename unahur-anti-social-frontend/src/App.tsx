@@ -6,7 +6,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 
 // Vistas
 import Home from './pages/Home';
-import Login  from './pages/Login';
+import { Login } from './pages/Login';
 import Register  from './pages/Register';
 import  PostDetail  from './pages/PostDetail';
 import Profile  from './pages/Profile';
@@ -21,7 +21,7 @@ function App() {
         <Navbar /> 
         
         {/* Un contenedor principal para darle márgenes a todas las vistas */}
-        <main style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+        <main className="main-container">
           <Routes>
             {/* --- RUTAS PÚBLICAS --- */}
             <Route path="/" element={<Home />} /> {/* Feed principal [cite: 27, 28] */}
