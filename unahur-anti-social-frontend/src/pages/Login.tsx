@@ -22,7 +22,7 @@ export const Login = () => {
 
     try {
       // Ajustado a la ruta estándar que suele usar JSON Server o el backend de la cátedra
-      const response = await fetch('http://localhost:3000/users'); 
+      const response = await fetch('http://localhost:3000/api/users'); 
       
       if (!response.ok) {
         throw new Error('Error al conectar con la API');

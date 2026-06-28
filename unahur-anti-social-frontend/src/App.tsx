@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 // Importación de componentes globales
-import  Navbar  from './components/Navbar';
+import  { Navbar } from './components/Navbar';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
