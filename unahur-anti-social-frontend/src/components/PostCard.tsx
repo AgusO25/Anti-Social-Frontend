@@ -1,12 +1,15 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-// Definimos la interfaz del Post aquí para tipar las props
 export interface Post {
-  id: number;
+  id?: number | string; 
+  _id?: number | string; 
   description: string;
   userId: number;
   tags?: string[];
-  imageUrl?: string;
+  // Agregamos la propiedad 'images' por si tu backend incrusta un array de imágenes
+  images?: { url: string }[]; 
+  imageUrl?: string; 
   commentsCount?: number;
 }
 
@@ -15,13 +18,38 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post }: PostCardProps) {
+  const postId = post._id || post.id;
+  
+  const [commentsCount, setCommentsCount] = useState<number>(post.commentsCount || 0);
+
+  // Intentamos obtener la imagen del array incrustado 'images' o de 'imageUrl'
+  const displayImageUrl = post.imageUrl || (post.images && post.images.length > 0 ? post.images[0].url : null);
+
+  useEffect(() => {
+    // Solo buscamos los comentarios apuntando a la ruta anidada de tu backend
+    const fetchComments = async () => {
+      try {
+        const res = await fetch(`http://localhost:3000/api/posts/${postId}/comments`);
+        if (res.ok) {
+          const data = await res.json();
+          setCommentsCount(data.length);
+        }
+      } catch (err) {
+        console.error(`Error al cargar comentarios del post ${postId}:`, err);
+      }
+    };
+
+    if (post.commentsCount === undefined) fetchComments();
+  }, [postId, post.commentsCount]);
+
   return (
     <div className="post-card">
       <p className="post-description">{post.description}</p>
       
-      {post.imageUrl && (
+      {/* Mostramos la imagen solo si el post trae alguna incrustada */}
+      {displayImageUrl && (
         <img 
-          src={post.imageUrl} 
+          src={displayImageUrl} 
           alt="Imagen adjunta" 
           style={{ width: '100%', borderRadius: '8px', margin: '16px 0', maxHeight: '400px', objectFit: 'cover' }} 
         />
@@ -37,10 +65,10 @@ export default function PostCard({ post }: PostCardProps) {
 
       <div className="post-footer">
         <span className="comments-count">
-          💬 {post.commentsCount || 0} comentarios //AÑADIR SVG PARA REEMPLAZAR EL EMOJI
+          💬 {commentsCount} comentarios
         </span>
         
-        <Link to={`/post/${post.id}`} className="btn-read-more">
+        <Link to={`/post/${postId}`} className="btn-read-more">
           Ver más
         </Link>
       </div>

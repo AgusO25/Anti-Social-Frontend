@@ -28,18 +28,32 @@ export const Login = () => {
         throw new Error('Error al conectar con la API');
       }
 
-      interface User { id: number; nickName: string; }
+      // Definimos que el identificador puede venir como id (SQL/JSON Server) o como _id (Mongo)
+      interface User { 
+        id?: number | string; 
+        _id?: number | string; 
+        nickName: string; 
+      }
       const users: User[] = await response.json();
-
+     // 3. Buscamos si el nickName ingresado existe en la base de datos
       const userExists = users.find((user: User) => user.nickName === nickName);
 
       if (userExists) {
-        auth?.login({ id: userExists.id, nickName: userExists.nickName }); // Ajustado a los parámetros de tu AuthContext
-        navigate('/');
+        // Obtenemos el ID sin importar de qué base de datos venga
+        const validId = userExists._id || userExists.id;
+
+        if (validId) {
+          // 4. Lo guardamos en el contexto global unificándolo siempre como "id"
+          auth?.login({ id: validId, nickName: userExists.nickName });
+          
+          // 5. Redirigimos al usuario a la página principal
+          navigate('/');
+        } else {
+          setError('El usuario devuelto por la API no tiene un identificador válido.');
+        }
       } else {
         setError('El usuario no existe. Verifica tu nickName.');
       }
-
     } catch (err) {
       console.error(err);
       setError('Hubo un problema al intentar conectar con el servidor.');

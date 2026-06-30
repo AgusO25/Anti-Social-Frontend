@@ -46,7 +46,7 @@ export default function Home() {
             <p style={{ textAlign: 'center', color: '#a0a0a0' }}>Aún no hay publicaciones.</p>
           ) : (
             posts.map((post) => (
-              <PostCard key={post.id} post={post} /> /* Renderizamos el componente modular */
+              <PostCard key={post._id || post.id} post={post} /> /* Renderizamos el componente modular */
             ))
           )}
         </div>
