@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -22,15 +23,16 @@ export default function Profile() {
 
     const fetchUserPosts = async () => {
       try {
-        // Consultamos a la API usando el userId[cite: 1]
-        const response = await fetch(`http://localhost:3000/api/posts?userId=${userId}`);
-        if (!response.ok) {
-          throw new Error('Error al cargar tus publicaciones');
-        }
-        const data = await response.json();
-        setPosts(data);
+        // Consultamos a la API usando el userId con Axios
+        const response = await axios.get(`http://localhost:3000/api/posts?userId=${userId}`);
+        
+        // Axios parsea el JSON automáticamente
+        setPosts(response.data);
       } catch (err) {
-        if (err instanceof Error) {
+        // Tipado estricto para capturar errores del backend
+        if (axios.isAxiosError(err)) {
+          setError(err.response?.data?.message || 'Error al cargar tus publicaciones');
+        } else if (err instanceof Error) {
           setError(err.message);
         } else {
           setError('Error desconocido al conectar con el servidor.');
@@ -60,7 +62,7 @@ export default function Profile() {
           <p>Bienvenido a tu perfil</p>
         </div>
         
-        {/* Botón para cerrar sesión solicitado en los requerimientos[cite: 1] */}
+        {/* Botón para cerrar sesión */}
         <button onClick={handleLogout} className="profile-logout-btn">
           Cerrar Sesión
         </button>
