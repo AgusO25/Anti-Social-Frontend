@@ -1,10 +1,11 @@
+import axios from 'axios';
 import { useState, useEffect, useContext, type FormEvent } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import './CommentSection.css';
 
 interface Comment {
   id: number;
-  text: string; // Dependiendo de tu API, esto podría llamarse 'description' o 'content'
+  text: string;
   postId: number;
   userId: number;
 }
@@ -19,19 +20,16 @@ export default function CommentSection({ postId }: CommentSectionProps) {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-  
   const auth = useContext(AuthContext);
 
   // Cargar lista de comentarios visibles
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/posts/${postId}/comments`);
-        if (!response.ok) throw new Error('Error al cargar los comentarios');
-        const data = await response.json();
-        setComments(data);
+        const response = await axios.get(`http://localhost:3000/api/posts/${postId}/comments`);
+        setComments(response.data);
       } catch (err) {
-        console.error(err);
+        console.error('Error al cargar los comentarios:', err);
       } finally {
         setLoading(false);
       }
@@ -56,36 +54,35 @@ export default function CommentSection({ postId }: CommentSectionProps) {
     setSubmitting(true);
 
     try {
-      // Envío mediante POST /comments
-      // Envío mediante POST /api/posts/:id/comments
-      const response = await fetch(`http://localhost:3000/api/posts/${postId}/comments`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          // Mandamos lo básico. Si el backend usa otro nombre para el texto, nos avisará.
-          text: newComment, 
-          user_nickName: auth.user.nickName
-        }),
+      // Envío mediante POST /api/posts/:id/comments usando Axios
+      const response = await axios.post(`http://localhost:3000/api/posts/${postId}/comments`, {
+        text: newComment, 
+        user_nickName: auth.user.nickName
       });
 
-      if (!response.ok) {
-        // Capturamos el error exacto del backend
-        const errorData = await response.json();
-        console.error("Detalle exacto del 400 en Comentarios:", errorData);
-        throw new Error(JSON.stringify(errorData));
-      }
-      const createdComment = await response.json();
+      const createdComment = response.data;
       
       // Actualizamos el estado local para mostrar el comentario instantáneamente
       setComments([...comments, createdComment]);
       setNewComment(''); // Limpiamos el input
 
-    } catch (err) {
+   } catch (err) {
       console.error("DEBUG DEL ERROR:", err);
-      console.error(err);
-      if (err instanceof Error) setError(err.message);
+      
+      // 2. Usamos el comprobador nativo de Axios
+      if (axios.isAxiosError(err)) {
+        // Aquí adentro, TypeScript ya sabe de forma segura que es un error de Axios
+        const backendMessage = err.response?.data?.message || err.response?.data?.errors;
+        setError(backendMessage ? JSON.stringify(backendMessage) : 'Error al comunicarse con el servidor');
+      } 
+      // 3. Capturamos errores genéricos de JavaScript (ej. problemas de red)
+      else if (err instanceof Error) {
+        setError(err.message);
+      } 
+      // 4. Fallback por si ocurre algo rarísimo
+      else {
+        setError('Ocurrió un error inesperado');
+      }
     } finally {
       setSubmitting(false);
     }
@@ -104,7 +101,6 @@ export default function CommentSection({ postId }: CommentSectionProps) {
           ) : (
             comments.map((comment) => (
               <div key={comment.id} className="comment-item">
-                {/* Si tu API trae datos del usuario, podrías mostrar el nombre aquí */}
                 <p>{comment.text}</p>
               </div>
             ))
