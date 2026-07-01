@@ -5,7 +5,7 @@ import { AuthContext } from '../context/AuthContext';
 import './CreatePost.css';
 
 interface Tag {
-  id: number;
+  _id: number;
   name: string;
 }
 

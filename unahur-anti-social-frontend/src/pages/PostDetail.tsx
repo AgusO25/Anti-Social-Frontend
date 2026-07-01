@@ -10,7 +10,7 @@ interface PostData {
   _id?: number | string;
   description: string;
   userId?: number | string;
-  tags?: string[];
+ tags?: (string | { _id?: string | number; id?: string | number; name: string })[];
   // 1. Cambiamos esto a un array de strings
   images?: string[];
 }
@@ -85,14 +85,20 @@ export default function PostDetail() {
         )}
 
         {/* Etiquetas */}
-        {post.tags && post.tags.length > 0 && (
-          <div className="post-detail-tags">
-            {post.tags.map((tag, index) => (
-              <span key={index} className="tag">#{tag}</span>
-            ))}
+       {post.tags && post.tags.length > 0 && (
+          <div className="post-tags">
+            {/* Quitamos el :any porque ya tipamos la interfaz arriba */}
+            {post.tags.map((tag, index) => {
+              // TypeScript ahora sabe que si es un string, lo usa directo. 
+              // Si no, sabe de forma segura que es un objeto con una propiedad 'name'.
+              const tagName = typeof tag === 'string' ? tag : tag.name; 
+              
+              return (
+                <span key={index} className="tag">#{tagName}</span>
+              );
+            })}
           </div>
         )}
-
         {/* Componente modular de comentarios asegurando que le pasamos un ID válido */}
         {validPostId && (
           <CommentSection postId={validPostId as string | number} />

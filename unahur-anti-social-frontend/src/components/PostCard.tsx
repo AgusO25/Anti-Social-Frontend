@@ -7,7 +7,7 @@ export interface Post {
   _id?: number | string; 
   description: string;
   userId: number;
-  tags?: string[];
+  tags?: (string | { _id?: string | number; id?: string | number; name: string })[];
   // 1. Cambiamos esto a un array de strings
   images?: string[]; 
   imageUrl?: string; 
@@ -58,12 +58,18 @@ export default function PostCard({ post }: PostCardProps) {
       )}
 
       {post.tags && post.tags.length > 0 && (
-        <div className="post-tags">
-          {post.tags.map((tag, index) => (
-            <span key={index} className="tag">#{tag}</span>
-          ))}
-        </div>
-      )}
+          <div className="post-tags"> {/* En PostDetail.tsx recuerda usar "post-detail-tags" */}
+            {post.tags.map((tag, index) => {
+              // 1. Extraemos el texto de forma segura
+              const tagName = typeof tag === 'string' ? tag : tag.name; 
+              
+              // 2. Imprimimos SOLO el texto (tagName), nunca el objeto completo (tag)
+              return (
+                <span key={index} className="tag">#{tagName}</span>
+              );
+            })}
+          </div>
+        )}
 
       <div className="post-footer">
         <span className="comments-count">
