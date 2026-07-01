@@ -1,5 +1,6 @@
+import axios from 'axios';
 import { useState, useEffect } from 'react';
-import PostCard, { type Post } from '../components/PostCard'; // Importamos componente e interfaz
+import PostCard, { type Post } from '../components/PostCard'; 
 import './Home.css';
 
 export default function Home() {
@@ -10,14 +11,16 @@ export default function Home() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/posts');
-        if (!response.ok) {
-          throw new Error('Error al cargar las publicaciones');
-        }
-        const data = await response.json();
-        setPosts(data);
+        // 1. Usamos axios.get en lugar de fetch
+        const response = await axios.get('http://localhost:3000/api/posts');
+        
+        // 2. Axios ya procesa el JSON y lo deja en .data
+        setPosts(response.data);
       } catch (err) {
-        if (err instanceof Error) {
+        // 3. Tipado seguro de errores usando axios.isAxiosError
+        if (axios.isAxiosError(err)) {
+          setError(err.response?.data?.message || 'Error al cargar las publicaciones');
+        } else if (err instanceof Error) {
           setError(err.message);
         } else {
           setError('Error desconocido al conectar con el servidor.');
