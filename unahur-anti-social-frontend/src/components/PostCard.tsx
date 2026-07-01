@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -26,32 +27,34 @@ export default function PostCard({ post }: PostCardProps) {
   const displayImageUrl = post.imageUrl || (post.images && post.images.length > 0 ? post.images[0].url : null);
 
   useEffect(() => {
-    // Solo buscamos los comentarios apuntando a la ruta anidada de tu backend
+    // Si el post ya trae la cantidad de comentarios desde el backend, evitamos hacer la petición
+    if (post.commentsCount !== undefined) return;
+
     const fetchComments = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/posts/${postId}/comments`);
-        if (res.ok) {
-          const data = await res.json();
-          setCommentsCount(data.length);
-        }
+        // Usamos axios en lugar de fetch
+        const res = await axios.get(`http://localhost:3000/api/posts/${postId}/comments`);
+        // Axios guarda la respuesta en .data
+        setCommentsCount(res.data.length);
       } catch (err) {
+        // En un simple log no hace falta tipar el error de forma estricta
         console.error(`Error al cargar comentarios del post ${postId}:`, err);
       }
     };
 
-    if (post.commentsCount === undefined) fetchComments();
+    fetchComments();
   }, [postId, post.commentsCount]);
 
   return (
     <div className="post-card">
       <p className="post-description">{post.description}</p>
       
-      {/* Mostramos la imagen solo si el post trae alguna incrustada */}
+      {/* Mostramos la imagen usando displayImageUrl */}
       {displayImageUrl && (
         <img 
           src={displayImageUrl} 
-          alt="Imagen adjunta" 
-          style={{ width: '100%', borderRadius: '8px', margin: '16px 0', maxHeight: '400px', objectFit: 'cover' }} 
+          alt="Adjunto del post" 
+          className="post-detail-image" 
         />
       )}
 
