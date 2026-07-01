@@ -11,13 +11,13 @@ interface PostData {
   description: string;
   userId?: number | string;
   tags?: string[];
-  // Agregamos la propiedad para las imágenes incrustadas que devuelve tu backend
-  images?: { id?: string | number; _id?: string | number; url: string }[];
+  // 1. Cambiamos esto a un array de strings
+  images?: string[];
 }
 
 export default function PostDetail() {
   // Capturamos el :id de la URL
-  const { id } = useParams(); 
+  const { id } = useParams();
 
   const [post, setPost] = useState<PostData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,7 +33,7 @@ export default function PostDetail() {
 
       } catch (err) {
         console.error(err);
-        
+
         // 2. Tipado seguro de errores con Axios y TypeScript
         if (axios.isAxiosError(err)) {
           setError(err.response?.data?.message || 'Publicación no encontrada');
@@ -72,13 +72,13 @@ export default function PostDetail() {
         {/* Imágenes renderizadas directamente desde el objeto post */}
         {post.images && post.images.length > 0 && (
           <div className="post-detail-images">
-            {post.images.map((img, index) => (
-              <img 
-                // Añadida la key obligatoria de React para iteraciones
-                key={img._id || img.id || index} 
-                src={img.url} 
-                alt="Adjunto del post" 
-                className="post-detail-image" 
+            {/* 2. Ahora map recorre textos, así que lo pasamos directo al src */}
+            {post.images.map((imgUrl, index) => (
+              <img
+                key={index}
+                src={imgUrl}
+                alt="Adjunto del post"
+                className="post-detail-image"
               />
             ))}
           </div>

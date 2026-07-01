@@ -8,8 +8,8 @@ export interface Post {
   description: string;
   userId: number;
   tags?: string[];
-  // Agregamos la propiedad 'images' por si tu backend incrusta un array de imágenes
-  images?: { url: string }[]; 
+  // 1. Cambiamos esto a un array de strings
+  images?: string[]; 
   imageUrl?: string; 
   commentsCount?: number;
 }
@@ -24,8 +24,7 @@ export default function PostCard({ post }: PostCardProps) {
   const [commentsCount, setCommentsCount] = useState<number>(post.commentsCount || 0);
 
   // Intentamos obtener la imagen del array incrustado 'images' o de 'imageUrl'
-  const displayImageUrl = post.imageUrl || (post.images && post.images.length > 0 ? post.images[0].url : null);
-
+  const displayImageUrl = post.imageUrl || (post.images && post.images.length > 0 ? post.images[0] : null);
   useEffect(() => {
     // Si el post ya trae la cantidad de comentarios desde el backend, evitamos hacer la petición
     if (post.commentsCount !== undefined) return;
