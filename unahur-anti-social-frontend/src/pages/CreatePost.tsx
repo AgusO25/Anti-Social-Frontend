@@ -39,7 +39,7 @@ export default function CreatePost() {
 
   // Manejo etiquetas
   const toggleTag = (tagName: string) => {
-    setSelectedTags(prev => 
+    setSelectedTags(prev =>
       prev.includes(tagName) ? prev.filter(t => t !== tagName) : [...prev, tagName]
     );
   };
@@ -48,7 +48,7 @@ export default function CreatePost() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!description.trim() || !auth?.user) return;
-    
+
     setSubmitting(true);
     setError(''); // Limpiamos errores previos al reintentar
 
@@ -66,7 +66,7 @@ export default function CreatePost() {
       if (selectedTags.length > 0) {
         for (const tagName of selectedTags) {
           await axios.post(`http://localhost:3000/api/posts/${postId}/tags`, {
-            tagName: tagName // Ajusta esto si tu backend pide { name: ... }
+            name: tagName // Ajusta esto si tu backend pide { name: ... }
           });
         }
       }
@@ -101,7 +101,7 @@ export default function CreatePost() {
     <div className="create-post-container">
       <h2 className="create-post-title">Nueva Publicación</h2>
       <form onSubmit={handleSubmit} className="create-post-form">
-        
+
         <div className="form-group">
           <label htmlFor="description">¿Qué estás pensando? *</label>
           <textarea id="description" className="form-textarea" value={description} onChange={(e) => setDescription(e.target.value)} required />
@@ -117,7 +117,7 @@ export default function CreatePost() {
           {loadingTags ? <p>Cargando...</p> : (
             <div className="tags-container">
               {availableTags.map(tag => (
-                <label key={tag.id} className="tag-checkbox-label">
+                <label key={tag._id || tag.name} className="tag-checkbox-label">
                   <input type="checkbox" checked={selectedTags.includes(tag.name)} onChange={() => toggleTag(tag.name)} />
                   #{tag.name}
                 </label>
