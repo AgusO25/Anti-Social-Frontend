@@ -5,18 +5,21 @@ class CommentService {
 
     // Trae los comentarios visibles de un post.
 
-    async getComments(postId: string): Promise<Comment[]> {
+    async getComments(postId: string | number): Promise<Comment[]> {
 
-        const response = await api.get(`/comments/posts/${postId}`);
+        const response = await api.get(`/posts/${postId}/comments`);
         
         return response.data
     }
 
     // Agregar un comentario.
 
-    async createComment(data: object) {
+    async createComment(postId: string | number , text: string , user_nickName: string): Promise<Comment> {
 
-        const response = await api.post("/comments", data);
+        const response = await api.post(`/posts/${postId}/comments`, {
+            text,
+            user_nickName
+        });
 
         return response.data;
     }

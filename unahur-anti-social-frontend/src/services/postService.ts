@@ -9,7 +9,7 @@ class PostService {
 
     async getPost(): Promise<Post[]> {
         try{
-            const response = await api.get("/post");
+            const response = await api.get("/posts");
 
             return response.data;
         } catch (error){
@@ -21,7 +21,7 @@ class PostService {
     // Obtener una publi por su id.
 
     async getPostById(id: string): Promise<Post> {
-        const response = await api.get(`/post/${id}`);
+        const response = await api.get(`/posts/${id}`);
         return response.data;
     }
 

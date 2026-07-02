@@ -2,20 +2,23 @@ import api from "./api";
 
 class PostImageService {
 
-    // Trae las umagenes de un post.
+    // Actualizar imagen
+    async uploadImage(postId: string, formData: FormData) {
 
-    async getImages(postId: string) {
-
-        const response = await api.get(`/postimages/post/${postId}`);
+        const response = await api.post(
+            `/posts/${postId}/images`,
+            formData
+        );
 
         return response.data;
     }
 
-    // Agregar una imagen.
+    // Borrar imagen
+    async deleteImage(postId: string) {
 
-    async createImage(data: object) {
-
-        const response = await api.post("/postimages", data);
+        const response = await api.delete(
+            `/posts/${postId}/images`
+        );
 
         return response.data;
     }
