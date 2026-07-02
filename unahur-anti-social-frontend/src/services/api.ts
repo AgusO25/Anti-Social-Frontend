@@ -16,7 +16,7 @@ import axios from "axios"; // Es una librería que nos permite comunicarnos con 
     y automáticamente utilizará esta URL base.
 */
 const api = axios.create({
-    baseURL: "http://localhost:3000",
+    baseURL: "http://localhost:3000/api",
 
     // Tiempo maximo de espera (Cada MIL es un segundo.)
     timeout: 10000,  // 10 segundos. Más que nada si se llega a caer el backend, no queda esperando para siempre.
