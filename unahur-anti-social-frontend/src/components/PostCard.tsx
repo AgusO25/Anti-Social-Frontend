@@ -2,17 +2,8 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-export interface Post {
-  id?: number | string; 
-  _id?: number | string; 
-  description: string;
-  userId: number;
-  tags?: (string | { _id?: string | number; id?: string | number; name: string })[];
-  // 1. Cambiamos esto a un array de strings
-  images?: string[]; 
-  imageUrl?: string; 
-  commentsCount?: number;
-}
+import type { Post } from "../interfaces/Post";
+
 
 interface PostCardProps {
   post: Post;
@@ -24,7 +15,7 @@ export default function PostCard({ post }: PostCardProps) {
   const [commentsCount, setCommentsCount] = useState<number>(post.commentsCount || 0);
 
   // Intentamos obtener la imagen del array incrustado 'images' o de 'imageUrl'
-  const displayImageUrl = post.imageUrl || (post.images && post.images.length > 0 ? post.images[0] : null);
+  const displayImageUrl = post.imagesUrl || ( post.images.length > 0 ? post.images[0] : null);
   useEffect(() => {
     // Si el post ya trae la cantidad de comentarios desde el backend, evitamos hacer la petición
     if (post.commentsCount !== undefined) return;
@@ -57,29 +48,46 @@ export default function PostCard({ post }: PostCardProps) {
         />
       )}
 
-      {post.tags && post.tags.length > 0 && (
-          <div className="post-tags"> {/* En PostDetail.tsx recuerda usar "post-detail-tags" */}
-            {post.tags.map((tag, index) => {
-              // 1. Extraemos el texto de forma segura
-              const tagName = typeof tag === 'string' ? tag : tag.name; 
-              
-              // 2. Imprimimos SOLO el texto (tagName), nunca el objeto completo (tag)
-              return (
-                <span key={index} className="tag">#{tagName}</span>
-              );
-            })}
-          </div>
-        )}
+            {post.tags.length > 0 && (
+
+        <div className="post-tags">
+
+          {post.tags.map((tag, index) => (
+
+            <span
+              key={index}
+              className="tag"
+            >
+              #{tag.name}
+            </span>
+
+          ))}
+
+        </div>
+
+      )}
 
       <div className="post-footer">
+
         <span className="comments-count">
+
           💬 {commentsCount} comentarios
+
         </span>
-        
-        <Link to={`/post/${postId}`} className="btn-read-more">
+
+        <Link
+          to={`/post/${postId}`}
+          className="btn-read-more"
+        >
+
           Ver más
+
         </Link>
+
       </div>
+
     </div>
+
   );
+
 }

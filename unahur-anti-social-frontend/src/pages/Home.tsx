@@ -1,6 +1,7 @@
-import axios from 'axios';
 import { useState, useEffect } from 'react';
-import PostCard, { type Post } from '../components/PostCard'; 
+import PostCard from '../components/PostCard';
+import type { Post } from '../interfaces/Post'; 
+import PostService from '../services/postService';
 import './Home.css';
 
 export default function Home() {
@@ -11,19 +12,17 @@ export default function Home() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        // 1. Usamos axios.get en lugar de fetch
-        const response = await axios.get('http://localhost:3000/api/posts');
-        
-        // 2. Axios ya procesa el JSON y lo deja en .data
-        setPosts(response.data);
+        // Obtenemos las publicaciones utilizando el Service.
+        const data = await PostService.getPosts();
+
+        // Guardamos las publicaciones en el estado.
+        setPosts(data);
       } catch (err) {
-        // 3. Tipado seguro de errores usando axios.isAxiosError
-        if (axios.isAxiosError(err)) {
-          setError(err.response?.data?.message || 'Error al cargar las publicaciones');
-        } else if (err instanceof Error) {
+        // El Service ya se encarga de Axios.
+        if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError('Error desconocido al conectar con el servidor.');
+          setError('Error al cargar las publicaciones.');
         }
       } finally {
         setLoading(false);
@@ -32,6 +31,7 @@ export default function Home() {
 
     fetchPosts();
   }, []);
+
 
   return (
     <div className="home-container">
@@ -49,7 +49,7 @@ export default function Home() {
             <p style={{ textAlign: 'center', color: '#a0a0a0' }}>Aún no hay publicaciones.</p>
           ) : (
             posts.map((post) => (
-              <PostCard key={post._id || post.id} post={post} /> /* Renderizamos el componente modular */
+              <PostCard key={post._id} post={post} /> /* Renderizamos el componente modular */
             ))
           )}
         </div>

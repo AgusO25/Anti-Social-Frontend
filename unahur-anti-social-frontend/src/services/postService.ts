@@ -7,7 +7,7 @@ import type { Post } from "../interfaces/Post";
 class PostService {
     // Obtener todas las publi.
 
-    async getPost(): Promise<Post[]> {
+    async getPosts(): Promise<Post[]> {
         try{
             const response = await api.get("/posts");
 
@@ -22,13 +22,6 @@ class PostService {
 
     async getPostById(id: string): Promise<Post> {
         const response = await api.get(`/posts/${id}`);
-        return response.data;
-    }
-
-    // Obtener las publis de un usuario.
-
-    async getPostsByUser(userId: string) {
-        const response = await api.get(`/posts?userId=${userId}`);
         return response.data;
     }
 
